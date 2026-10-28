@@ -4,6 +4,7 @@
 <configuration>
     <typeAliases>
         <typeAlias type="com.Users.Users" alias="Users"/>
+        <package name="com.entity"/>
     </typeAliases>
     <environments default="development">
         <environment id="development">
@@ -19,5 +20,8 @@
     <!--把映射文件注册到配置文件中-->
     <mappers>
         <mapper resource="mapper/userMapper.xml"/>
+        <mapper resource="mapper/OrdersMapper.xml"/>
+        <mapper resource="mapper/ClassMapper.xml"/>
+        <mapper resource="mapper/EmployeeMapper.xml"/>
     </mappers>
 </configuration>

@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="DataSourcePerFileMappings">
+    <file url="file://$PROJECT_DIR$/src/main/resources/mapper/ClassMapper.xml" value="b187fe74-c83e-46c9-acc1-8545121d4b44" />
+    <file url="file://$PROJECT_DIR$/src/main/resources/mapper/OrdersMapper.xml" value="b187fe74-c83e-46c9-acc1-8545121d4b44" />
     <file url="file://$PROJECT_DIR$/src/main/resources/mapper/userMapper.xml" value="b187fe74-c83e-46c9-acc1-8545121d4b44" />
   </component>
 </project>
