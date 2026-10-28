@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--namespace:命令空间。现在可以随便起名。
+              后续需要和dao的名称一致。
+-->
+<mapper namespace="com.dao.OrdersDao">
+
+
+    <!--根据订单号查询订单信息-->
+    <!--方式1: 为查询的结果起别名 让其别名和属性名一致即可.
+                这种方式 如果有多个查询 都需要起别名
+    -->
+    <!--    <select id="getByNo" resultType="Orders">-->
+    <!--        select order_id id,order_no no,order_price price from orders where order_no=#{no}-->
+    <!--    </select>-->
+    <!--查询所有订单-->
+    <!--    <select id="getAll" resultType="Orders">-->
+    <!--        select order_id id,order_no no,order_price price from orders-->
+    <!--    </select>-->
+
+    <!--resultMap完成列名和属性之间的映射关系。
+            id:主键列和属性的映射
+            result: 普通列和属性的映射
+    -->
+    <resultMap id="orderMapper" type="Orders">
+        <id column="order_id" property="id"/>
+        <result column="order_no" property="no"/>
+        <result column="order_price" property="price"/>
+    </resultMap>
+    <!--方式2: 使用resultMap来解决列名和属性的的映射
+           resultMap需要引用一个映射关系标签 而且resultMap和resultType不能同时使用
+    -->
+    <select id="getByNo" resultMap="orderMapper">
+        select * from orders where order_no=#{no}
+    </select>
+    <select id="getAll" resultMap="orderMapper">
+        select * from orders
+    </select>
+</mapper>
