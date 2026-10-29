@@ -2,6 +2,12 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.dao.EmployeeDao">
+    <!--
+    开启二级缓存（namespace 级，全局共享，跨 SqlSession）：
+    eviction=FIFO 缓存策略，flushInterval=60000 每60s刷新，size=512 最多缓存512个对象，readOnly=true 返回只读对象
+    注意：实体类需要可序列化(implements Serializable)才能走二级缓存
+    -->
+    <cache eviction="FIFO" flushInterval="60000" size="512" readOnly="true"/>
     <resultMap id="EmployeeMapper" type="com.entity.Employee" autoMapping="true">
         <id property="empId" column="emp_id"/>
         <result property="empName" column="emp_name"/>
@@ -110,4 +116,43 @@ delete from employee where id in(1,6,9)
             (#{emp.empName},#{emp.gender},#{emp.age},#{emp.dept},#{emp.job},#{emp.salary},#{emp.hiredate},#{emp.phone},#{emp.email})
         </foreach>
     </insert>
+    <!--
+    ${} 与 #{} 的区别演示：
+    #{empName} -> 预编译 ??? ，最终生成 select * from employee where emp_name = ? ，参数通过 PreparedStatement 传值并被转义、加引号
+    ${empName} -> 字符串直接拼接，最终生成 select * from employee where emp_name = 'xxx' ，不转义，可注入
+    -->
+    <select id="selectByHash" resultMap="EmployeeMapper">
+        select * from employee where emp_name = #{empName}
+    </select>
+    <select id="selectByDollar" resultMap="EmployeeMapper">
+        select * from employee where emp_name = '${empName}'
+    </select>
+    <!--
+    order by 等列名/排序片段只能用 ${} 拼接，因为 #{} 只能占位值，不能放列名。
+    注意：此场景入参必须由代码严格控制，否则有注入风险。
+    -->
+    <select id="selectOrderBy" resultMap="EmployeeMapper">
+        select * from employee order by ${column}
+    </select>
+    <!--
+    传参多个参数 + 模糊查询：
+    - 多参数：DAO 方法使用 @Param("empName")/@Param("dept")，XML 中直接按参数名引用
+    - 模糊：用 concat('%', #{值}, '%') 实现 like，用 #{} 传值防注入（不要写 '${xx}%'）
+    - 分页：由 PageHelper.startPage(pageNum, pageSize) 代理自动拼接 limit，无需改此 SQL
+    -->
+    <select id="selectEmployee" resultMap="EmployeeMapper">
+        select * from employee
+        <where>
+            <if test="empName != null and empName != ''">
+                and emp_name like concat('%', #{empName}, '%')
+            </if>
+            <if test="dept != null and dept != ''">
+                and dept like concat('%', #{dept}, '%')
+            </if>
+        </where>
+    </select>
+    <!-- 缓存演示：按主键查询。useCache=true 表示该查询结果存入二级缓存 -->
+    <select id="selectByEmpId" resultMap="EmployeeMapper" useCache="true">
+        select * from employee where emp_id = #{empId}
+    </select>
 </mapper>

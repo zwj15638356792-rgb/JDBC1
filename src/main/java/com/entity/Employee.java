@@ -2,11 +2,13 @@ package com.entity;
 
 import lombok.Data;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Data
-public class Employee {
+public class Employee implements Serializable {
+    private static final long serialVersionUID = 1L;
     private Integer empId;//员工编号
     private String empName;//员工姓名
     private String gender;//性别
